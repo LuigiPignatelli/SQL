@@ -168,6 +168,39 @@ FROM (
 	)
 ) AS user_bots;
 
+
 -- BONUS CHALLENGE:
 -- find the most popular photo for each user
+-- what if the user has two popular photos, how do we get both of them?
+SELECT
+	sub.user_id
+    ,sub.photo_url
+	,MAX(sub.likes) AS max_likes_per_user
+FROM (
+	SELECT
+		u.user_id
+		,p.photo_url
+		,COUNT(l.photo_id) AS likes
+	FROM instagram_db.users AS u
+	INNER JOIN instagram_db.photos AS p ON u.user_id = p.user_id
+	INNER JOIN instagram_db.likes AS l ON p.photo_id = l.photo_id
+	GROUP BY
+		p.photo_url
+) AS sub
+GROUP BY
+	sub.user_id;
+
+
 -- find the most popular user
+SELECT
+	p.user_id
+    ,u.username
+    ,COUNT(p.photo_id) AS likes
+FROM instagram_db.users AS u
+INNER JOIN instagram_db.photos AS p ON u.user_id = p.user_id 
+INNER JOIN instagram_db.likes AS l ON p.photo_id = l.photo_id
+GROUP BY
+	p.user_id
+ORDER BY
+	likes DESC
+LIMIT 1;
